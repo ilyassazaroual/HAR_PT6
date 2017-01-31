@@ -1,0 +1,38 @@
+#pkg-config --libs opencv
+
+CC=pgc++ -Minfo -acc
+
+all: imageProcessing 
+
+imageProcessing: imageProcessing.cpp globalVars.cpp imageProcessing.h routines.h utilities.o blockMatching.o loadImages.o cornerDetection.o transformImage.o filterImage.o xml.o
+	$(CC) -g  imageProcessing.cpp -o imageProcessing -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab -I/usr/include/libxml2 -lxml2 utilities.o blockMatching.o loadImages.o cornerDetection.o transformImage.o filterImage.o xml.o
+
+
+utilities.o: utilities.cpp imageProcessing.h
+	$(CC) -g -c utilities.cpp  -I/usr/include/libxml2
+
+blockMatching.o: blockMatching.cpp imageProcessing.h
+	$(CC) -g -c blockMatching.cpp  -I/usr/include/libxml2
+
+cornerDetection.o: cornerDetection.cpp imageProcessing.h
+	$(CC) -g -c cornerDetection.cpp  -I/usr/include/libxml2
+
+transformImage.o: transformImage.cpp imageProcessing.h
+	$(CC) -g -c transformImage.cpp  -I/usr/include/libxml2
+
+filterImage.o: filterImage.cpp imageProcessing.h
+	$(CC) -g -c filterImage.cpp  -I/usr/include/libxml2
+
+loadImages.o: loadImages.cpp globalVars.h imageProcessing.h
+	$(CC) -g -c loadImages.cpp  -I/usr/include/libxml2
+
+xml.o: xml.cpp globalVars.h imageProcessing.h 
+	$(CC) -g -c xml.cpp  -I/usr/include/libxml2
+
+
+
+run: imageProcessing
+	 nvprof ./imageProcessing -v -sh --filter screen_10.yuv.png 
+
+clean:
+	rm -rf *~ imageProcessing *.dSYM *.o *.xml
